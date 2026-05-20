@@ -140,6 +140,32 @@
         .importance-3 { padding: 30px 50px; font-size: 3rem; }
         .importance-3 .pill-dday { color: #ff3366; text-shadow: 0 0 25px rgba(255, 51, 102, 0.5); border-color: rgba(255,51,102,0.3); }
 
+        /* 삭제 버튼 */
+        .delete-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s, background 0.2s;
+            margin-left: 5px;
+        }
+        
+        .dday-pill:hover .delete-btn {
+            opacity: 1;
+        }
+        
+        .delete-btn:hover {
+            background: #ff3366;
+        }
+
         /* 좌상단 고정 아이콘 */
         .top-nav {
             position: absolute;
@@ -280,8 +306,14 @@
             ddaySpan.className = 'pill-dday';
             ddaySpan.textContent = formatDday(diffDays);
             
+            // 삭제 버튼 생성
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '&times;';
+            
             elem.appendChild(titleSpan);
             elem.appendChild(ddaySpan);
+            elem.appendChild(deleteBtn);
             document.body.appendChild(elem);
             
             // 2. 물리 Body 생성 전 크기 측정
@@ -303,6 +335,20 @@
             
             bodyMap.set(elem, body);
             Composite.add(engine.world, body);
+
+            // 삭제 버튼 클릭 이벤트 (마우스다운으로 처리해 드래그 연산 방해 차단)
+            deleteBtn.addEventListener('mousedown', (e) => {
+                e.stopPropagation(); // 폭발 이벤트 방지
+                Composite.remove(engine.world, body);
+                bodyMap.delete(elem);
+                elem.remove();
+            });
+            deleteBtn.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+                Composite.remove(engine.world, body);
+                bodyMap.delete(elem);
+                elem.remove();
+            });
         }
 
         // 폼 제출 이벤트
