@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://d-day-timer.vercel.app/sitemap.xml
